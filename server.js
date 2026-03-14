@@ -65,6 +65,7 @@ app.use('/api/shop/customer', shopCustomerRoutes);
 app.use('/api/shop/orders', shopOrderRoutes); 
 app.use('/api/shop/admin', shopAdminAuthRoutes); 
 
+app.get('/api/health', (req, res) => res.status(200).json({ status: 'ok', timestamp: new Date() }));
 app.get('/', (req, res) => res.send('ATS-Digital Ecosystem API is running. (Workshop + Shop)'));
 
 // Start the server
