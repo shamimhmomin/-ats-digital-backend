@@ -1,57 +1,39 @@
 require('dotenv').config();
+const path = require('path');
 
-const connectionConfig = {
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
-};
+const isProduction = process.env.NODE_ENV === 'production';
+const hasDbUrl = !!process.env.DATABASE_URL;
+const usePostgres = isProduction || (hasDbUrl && process.env.USE_POSTGRES === 'true');
 
 module.exports = {
   development: {
-    client: 'pg',
-    connection: connectionConfig,
-    pool: {
-      min: 0,
-      max: 10,
-      acquireTimeoutMillis: 30000,
-      idleTimeoutMillis: 30000,
-      reapIntervalMillis: 1000,
-      createTimeoutMillis: 30000,
-      createRetryIntervalMillis: 200,
-      propagateCreateError: false
-    },
+    client: usePostgres ? 'pg' : 'sqlite3',
+    connection: usePostgres 
+      ? {
+          connectionString: process.env.DATABASE_URL,
+          ssl: { rejectUnauthorized: false }
+        }
+      : {
+          filename: path.join(__dirname, 'inventory.db')
+        },
+    useNullAsDefault: !usePostgres,
+    pool: isProduction 
+      ? { min: 0, max: 15, acquireTimeoutMillis: 30000 }
+      : { min: 1, max: 1 },
     migrations: {
       directory: './db/migrations'
-    },
-    acquireConnectionTimeout: 60000
-  },
-
-  staging: {
-    client: 'pg',
-    connection: connectionConfig,
-    pool: {
-      min: 0,
-      max: 10,
-      acquireTimeoutMillis: 30000
-    },
-    migrations: {
-      tableName: 'knex_migrations'
-    },
-    acquireConnectionTimeout: 60000
+    }
   },
 
   production: {
     client: 'pg',
-    connection: connectionConfig,
-    pool: {
-      min: 0,
-      max: 15,
-      acquireTimeoutMillis: 30000,
-      idleTimeoutMillis: 30000,
-      reapIntervalMillis: 1000
+    connection: {
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false }
     },
+    pool: { min: 0, max: 15, acquireTimeoutMillis: 30000 },
     migrations: {
       tableName: 'knex_migrations'
-    },
-    acquireConnectionTimeout: 60000
+    }
   }
 };
