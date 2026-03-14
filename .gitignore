@@ -1,0 +1,12 @@
+# Ignore environment variables
+.env
+
+# Ignore database files
+inventory.db
+shop.db
+
+# Ignore logs
+*.log
+
+# Ignore node modules
+node_modules
