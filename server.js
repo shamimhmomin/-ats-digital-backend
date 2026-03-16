@@ -19,6 +19,7 @@ const shopRoutes = require('./routes/shop'); // New Shop Routes
 const shopCustomerRoutes = require('./routes/shop-customer'); // New Customer Auth
 const shopOrderRoutes = require('./routes/shop-orders'); // New Orders
 const shopAdminAuthRoutes = require('./routes/shop-admin-auth'); // New Shop Admin Auth
+const hisaabRoutes = require('./routes/hisaab'); // New Hisaab Kitab Routes
 
 const app = express();
 const port = process.env.PORT || 3002;
@@ -64,6 +65,7 @@ app.use('/api/shop', shopRoutes);
 app.use('/api/shop/customer', shopCustomerRoutes);
 app.use('/api/shop/orders', shopOrderRoutes); 
 app.use('/api/shop/admin', shopAdminAuthRoutes); 
+app.use('/api/hisaab', hisaabRoutes); 
 
 app.get('/api/health', (req, res) => res.status(200).json({ status: 'ok', timestamp: new Date() }));
 app.get('/', (req, res) => res.send('ATS-Digital Ecosystem API is running. (Workshop + Shop)'));
